@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RDM Client</string>
+    <string name="device_registered">Device registered successfully</string>
+    <string name="registration_failed">Device registration failed</string>
+    <string name="sync_started">Data sync started</string>
+    <string name="sync_failed">Data sync failed</string>
+    <string name="location_permission_required">Location permission is required</string>
+    <string name="battery_optimization_title">Battery Optimization</string>
+    <string name="battery_optimization_message">Please disable battery optimization for this app to ensure proper background operation</string>
+    <string name="device_id">Device ID</string>
+    <string name="last_sync">Last Sync</string>
+    <string name="sync_status">Sync Status</string>
+    <string name="location_status">Location Status</string>
+    <string name="network_status">Network Status</string>
+    <string name="battery_level">Battery Level</string>
+    <string name="start_monitoring">Start Monitoring</string>
+    <string name="stop_monitoring">Stop Monitoring</string>
+    <string name="monitoring_active">Monitoring Active</string>
+    <string name="monitoring_inactive">Monitoring Inactive</string>
+</resources>

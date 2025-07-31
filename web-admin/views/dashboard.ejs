@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/dashboard.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-mobile-alt"></i>
+                <span>RDM Admin</span>
+            </div>
+            <div class="nav-menu">
+                <a href="/" class="nav-link active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+                <a href="/devices" class="nav-link">
+                    <i class="fas fa-mobile-alt"></i>
+                    Devices
+                </a>
+                <div class="nav-user">
+                    <span>Welcome, <%= user.username %></span>
+                    <a href="/logout" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>Dashboard</h1>
+                <p>Remote Device Manager Overview</p>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><%= stats.totalDevices %></h3>
+                        <p>Total Devices</p>
+                    </div>
+                </div>
+
+                <div class="stat-card active">
+                    <div class="stat-icon">
+                        <i class="fas fa-wifi"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><%= stats.activeDevices %></h3>
+                        <p>Active Devices</p>
+                        <small>Last 24 hours</small>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><%= stats.logsToday %></h3>
+                        <p>Logs Today</p>
+                    </div>
+                </div>
+
+                <div class="stat-card new">
+                    <div class="stat-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><%= stats.newDevicesToday %></h3>
+                        <p>New Devices</p>
+                        <small>Today</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Devices -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>Recent Devices</h2>
+                    <a href="/devices" class="btn btn-primary">
+                        <i class="fas fa-eye"></i>
+                        View All
+                    </a>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Device ID</th>
+                                <th>Model</th>
+                                <th>Manufacturer</th>
+                                <th>Last Seen</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (recentDevices.length > 0) { %>
+                                <% recentDevices.forEach(device => { %>
+                                    <tr>
+                                        <td>
+                                            <code><%= device.device_id.substring(0, 12) %>...</code>
+                                        </td>
+                                        <td><%= device.model %></td>
+                                        <td><%= device.manufacturer %></td>
+                                        <td>
+                                            <span class="timestamp">
+                                                <%= new Date(device.last_seen).toLocaleString() %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <% if (device.is_active) { %>
+                                                <span class="status-badge active">Active</span>
+                                            <% } else { %>
+                                                <span class="status-badge inactive">Inactive</span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <a href="/devices/<%= device.device_id %>" class="btn btn-sm btn-outline">
+                                                <i class="fas fa-eye"></i>
+                                                View
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="6" class="text-center">
+                                        <div class="empty-state">
+                                            <i class="fas fa-mobile-alt"></i>
+                                            <p>No devices found</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>Quick Actions</h2>
+                </div>
+
+                <div class="actions-grid">
+                    <a href="/devices" class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-list"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3>Manage Devices</h3>
+                            <p>View and manage all registered devices</p>
+                        </div>
+                    </a>
+
+                    <div class="action-card" onclick="refreshData()">
+                        <div class="action-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3>Refresh Data</h3>
+                            <p>Update dashboard with latest information</p>
+                        </div>
+                    </div>
+
+                    <div class="action-card" onclick="exportData()">
+                        <div class="action-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3>Export Data</h3>
+                            <p>Download device data and logs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Remote Device Manager. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>
